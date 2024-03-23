@@ -6,6 +6,7 @@
     <title>Discover a Random Ayah</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
+          @import url(https://fonts.googleapis.com/earlyaccess/droidarabicnaskh.css);  
         body {
             background-color: #141414;
             display: flex;
@@ -36,8 +37,8 @@
         }
 
         .arabic-verse {
-            font-family: 'Lateef', cursive;
-            font-size: 2rem; 
+            font-family: 'Droid Arabic Naskh', serif;
+            font-size: 2.2rem; 
             line-height: 1.8;
             text-align: right;
             direction: rtl; 
@@ -71,7 +72,19 @@
             .arabic-verse {
                 font-size: 1.2rem; 
                 line-height: 1.6; 
+                
             }
+            .get-random-verse {
+                width: 100%;
+            }
+            .search-verse {
+                margin: 0;
+                width: 100%;
+            }
+            .search-verse-button, .download-verse-button, .play-button{
+                width: 100%;
+            }
+            
         }
         @media only screen and (max-width: 600px) {
             .ayah-container {
@@ -79,8 +92,8 @@
             }
 
         }
-        .search-verse {
-            width: calc(100% - 8px); 
+        .search-verse{
+            width: calc(100%); 
             background-color: #4B5563;
             border: none; 
             box-sizing: border-box;
@@ -96,35 +109,41 @@
     <div class="container mx-auto px-4 py-8">
         <h2 class="text-4xl font-bold mb-8 text-center">Discover a Random Ayah</h2>
         <div class="flex flex-col md:flex-row justify-center items-center gap-8">
-            <div class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3">
+            <div class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 text-center">
                 <h3 class="text-2xl font-semibold mb-4">Arabic Verse</h3>
                 <p class="arabic-verse accent-gray">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
             </div>
-            <div class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3">
+            <div class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 text-center">
                 <h3 class="text-2xl font-semibold mb-4">English Translation</h3>
                 <p class="english-verse accent-gray">In the name of Allah, the Most Gracious, the Most Merciful.</p>
             </div>
-            <div class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3">
-                <h3 class="text-2xl font-semibold mb-4">Other Information</h3>
-                <p class="surah-info accent-gray">Surah Al-Fatiha, Verse 1</p>
+            <div class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 ">
+                <h3 class="text-2xl font-semibold mb-4 text-center" >Other Information</h3>
+                <p class="surah-info accent-gray">Surah (1) سُورَةُ اَلْفَاتِحَةُ, Verse: 1</p>
+                <p class="english-name accent-gray">English Name: Al-Faatiha</p>
+                <p class="relevation-type accent-gray">Relevation Type: Meccan</p>
+                <p class="is-sajda accent-gray">Sajda: No</p>
                 <p class="juz-info accent-gray">Juz: 1</p>
                 <p class="manzil-info accent-gray">Manzil: 1</p>
                 <p class="page-info accent-gray">Page: 1</p>
                 <p class="ruku-info accent-gray">Ruku: 1</p>
                 <p class="hizb-info accent-gray">Hizb: 1</p>
+
+                
             </div>
         </div>
         <div class="mt-8 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8">
             <button class="get-random-verse bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out" aria-label="Get a random verse">Get Random Verse</button>
+            <button class="play-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-100 ease-in-out">Play Audio</button>
+            <button class="download-verse-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration1-00 ease-in-out"> <a class="download-link"  download="1:1.mp3">Download Verse</a></button>
             <input type="text" class="search-verse bg-gray-800 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" placeholder="Search by Surah and Verse Number (e.g., 2:256)">
             <button class="search-verse-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out">Search</button>
-            <button class="play-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-100 ease-in-out">Play Audio</button>
         </div>
         <div class="mt-8">
             <audio class="verse-audio hidden-audio-player" controls autoplay></audio>
         </div>
         <div class="loading-indicator mt-8 text-lg text-center" style="display: none;">Loading...</div>
-        <a href="https://www.github.com/zuhaz" class="watermark" target="_blank">Created by Zuhaz</a>
+        <a href="https://www.github.com/zuhaz" class="watermark" target="_blank" rel="noopener noreferrer">Created by Zuhaz</a>
 
     </div>
     <script src="script.js"></script>
