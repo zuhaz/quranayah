@@ -61,7 +61,11 @@ document.addEventListener('DOMContentLoaded', function () {
     function displayVerse(arabicData, englishData) {
         arabicVerse.textContent = arabicData.text;
         englishVerse.textContent = englishData.text;
-
+        document.querySelector('.juz-info').textContent = `Juz: ${arabicData.juz}`;
+        document.querySelector('.manzil-info').textContent = `Manzil: ${arabicData.manzil}`;
+        document.querySelector('.page-info').textContent = `Page: ${arabicData.page}`;
+        document.querySelector('.ruku-info').textContent = `Ruku: ${arabicData.ruku}`;
+        document.querySelector('.hizb-info').textContent = `Hizb Quarter: ${arabicData.hizbQuarter}`;
         surahInfo.textContent = `Surah: ${arabicData.surah.name} (${arabicData.surah.number}), Verse: ${arabicData.numberInSurah}`;
     }
 
