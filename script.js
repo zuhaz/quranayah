@@ -97,6 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 audioFileUrl = audioBaseUrl + data.audio_files[0].url;
                 verseAudio.src = audioFileUrl;
                 verseAudio.play();
+                 playButton.innerHTML = "Pause Audio";
+
             })
             .catch(error => {
                 console.error('Error fetching audio:', error);
