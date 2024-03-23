@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     function getRandVerse() {
         const randomAyah = Math.floor(Math.random() * 6237 + 1);
-        const base_url = `http://api.alquran.cloud/v1/ayah/${randomAyah}/editions/quran-uthmani,en.pickthall`;
+        const base_url = `https://api.alquran.cloud/v1/ayah/${randomAyah}/editions/quran-uthmani,en.pickthall`;
 
         fetch(base_url)
             .then(response => response.json())
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function getVerseBySurahAndVerse(surah, verse) {
-        const base_url = `http://api.alquran.cloud/v1/ayah/${surah}:${verse}/editions/quran-uthmani,en.pickthall`;
+        const base_url = `https://api.alquran.cloud/v1/ayah/${surah}:${verse}/editions/quran-uthmani,en.pickthall`;
 
         fetch(base_url)
             .then(response => response.json())
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function displayVerse(arabicData, englishData) {
         arabicVerse.textContent = arabicData.text;
         englishVerse.textContent = englishData.text;
-        
+
         surahInfo.textContent = `Surah: ${arabicData.surah.name} (${arabicData.surah.number}), Verse: ${arabicData.numberInSurah}`;
     }
 
