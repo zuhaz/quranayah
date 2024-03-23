@@ -49,7 +49,7 @@ Welcome to the DISCOVER A RANDOM AYAH project! This project allows users to expl
 
 
 ## Live Demo
-![Live Demo]()
+![Live Demo](https://quranayah.vercel.app/)
 
 ## Installation
 - Clone the repository: `git clone https://github.com/zuhaz/discover-ayah`
