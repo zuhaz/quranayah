@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
       fetchVerse(`${surah}:${verse}`);
       newSections = [];
       getTafsirs(`${surah}:${verse}`);
+      tafsirButton.disabled = false;
     } else {
       alert("Please enter a valid Surah and Verse Number (e.g., 2:256)");
     }
@@ -64,7 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
           data.data[0].numberInSurah,
           7
         );
-        // getTafsirs(`${data.data[0].surah.number}:${data.data[0].numberInSurah}`);
         loadingIndicator.style.display = "none";
       })
       .catch((error) => {
@@ -106,6 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ).textContent = `Tafsir for ${arabicData.surah.name}, Verse: ${arabicData.numberInSurah}`;
     newSections = [];
     getTafsirs(`${arabicData.surah.number}:${arabicData.numberInSurah}`);
+    tafsirButton.disabled = false;
   }
 
   // Fetch audio for verse
@@ -159,22 +160,19 @@ document.addEventListener("DOMContentLoaded", function () {
       playButton.innerHTML = "Play Audio";
     }
   }
-  let newSections = [];
   const tafsirButton = document.getElementById("tafsirButton");
   const accordion = document.getElementById("accordion-open");
   const overlay = document.getElementById("overlay");
 
   tafsirButton.addEventListener("click", function () {
-    if (playButton.textContent == "Pause Audio") {
-      accordion.classList.toggle("hidden");
-      overlay.classList.toggle("hidden");
-      document.getElementById("accordion-open").classList.toggle("hidden");
-      // Toggle the 'show' class for the accordion body
-      const accordionBodies = document.querySelectorAll(".accordion-body");
-      accordionBodies.forEach((body) => {
-        body.classList.toggle("hidden");
-      });
-    }
+    accordion.classList.toggle("show");
+    overlay.classList.toggle("show");
+    document.getElementById("accordion-open").classList.toggle("show");
+    // Toggle the 'show' class for the accordion body
+    const accordionBodies = document.querySelectorAll(".accordion-body");
+    accordionBodies.forEach((body) => {
+      body.classList.toggle("show");
+    });
   });
 
   async function getTafsirs(ayahKey) {
@@ -379,12 +377,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Add click event listener to the tafsir button
     const tafsirButton = document.getElementById("tafsirButton");
     tafsirButton.addEventListener("click", function () {
-      accordion.classList.toggle("hidden");
-      overlay.classList.toggle("show");
+      accordion.classList.remove("hidden");
+      overlay.classList.remove("hidden");
       // Toggle the 'show' class for the accordion body
       const accordionBodies = document.querySelectorAll(".accordion-body");
       accordionBodies.forEach((body) => {
-        body.classList.toggle("show");
+        body.classList.remove("hidden");
       });
     });
 
