@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Display verse
-  // Display verse
   async function displayVerse(arabicData, englishData) {
     arabicVerse.textContent = arabicData.text;
     englishVerse.textContent = englishData.text;
@@ -104,11 +103,9 @@ document.addEventListener("DOMContentLoaded", function () {
     ).textContent = `Hizb Quarter: ${arabicData.hizbQuarter}`;
     document.querySelector(
       ".accordion-title"
-    ).textContent = `Tafsir for ${arabicData.surah.name}`;
+    ).textContent = `Tafsir for ${arabicData.surah.name}, Verse: ${arabicData.numberInSurah}`;
     newSections = [];
     getTafsirs(`${arabicData.surah.number}:${arabicData.numberInSurah}`);
-
-    // Clear the accordion container
   }
 
   // Fetch audio for verse
