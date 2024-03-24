@@ -1,151 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Discover a Random Ayah</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
     <style>
-          @import url(https://fonts.googleapis.com/earlyaccess/droidarabicnaskh.css);  
-        body {
-            background-color: #141414;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh; /* Ensure full height of the viewport */
-        }
+      @import url(https://fonts.googleapis.com/earlyaccess/droidarabicnaskh.css);
+      body {
+        background-color: #141414;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* Ensure full height of the viewport */
+      }
 
-        .main-container {
-            max-width: 800px; /* Adjust max-width as needed */
-            width: 100%;
-            padding: 0 20px;
-        }
+      .main-container {
+        max-width: 800px; /* Adjust max-width as needed */
+        width: 100%;
+        padding: 0 20px;
+      }
 
-        .accent-red {
-            color: #E50914;
-        }
+      .accent-red {
+        color: #e50914;
+      }
 
-        .accent-gray {
-            color: #B3B3B3;
-        }
+      .accent-gray {
+        color: #b3b3b3;
+      }
 
-        .bg-netflix {
-            background-image: linear-gradient(rgba(20, 20, 20, 0.8), rgba(20, 20, 20, 0.8)), url('https://source.unsplash.com/1600x900/?nature');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center center;
-        }
+      .bg-netflix {
+        background-image: linear-gradient(
+            rgba(20, 20, 20, 0.8),
+            rgba(20, 20, 20, 0.8)
+          ),
+          url("https://source.unsplash.com/1600x900/?nature");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+      }
 
+      .arabic-verse {
+        font-family: "Droid Arabic Naskh", serif;
+        font-size: 2.2rem;
+        line-height: 1.8;
+        text-align: right;
+        direction: rtl;
+        margin-bottom: 1.5rem;
+        letter-spacing: 0.05em;
+        word-spacing: 0.1em;
+      }
+
+      .hidden-audio-player {
+        visibility: hidden;
+        position: absolute;
+        width: 0;
+        height: 0;
+      }
+      .watermark {
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: underline;
+      }
+      @media (max-width: 1024px) {
         .arabic-verse {
-            font-family: 'Droid Arabic Naskh', serif;
-            font-size: 2.2rem; 
-            line-height: 1.8;
-            text-align: right;
-            direction: rtl; 
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.05em;
-            word-spacing: 0.1em; 
+          font-size: 1.5rem;
         }
+      }
 
-        .hidden-audio-player {
-            visibility: hidden;
-            position: absolute;
-            width: 0;
-            height: 0;
+      /* Optimize media queries */
+      @media (max-width: 768px) {
+        .arabic-verse {
+          font-size: 1.2rem;
+          line-height: 1.6;
         }
-        .watermark {
-            position: fixed;
-            bottom: 10px; 
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.5); 
-            text-decoration: underline;
+        .get-random-verse,
+        .search-verse,
+        .search-verse-button,
+        .download-verse-button,
+        .play-button,
+        .tafsir-button {
+          width: 100%;
         }
-        @media (max-width: 1024px) {
-            .arabic-verse {
-                font-size: 1.5rem;
-            }
+      }
+      @media only screen and (max-width: 600px) {
+        .ayah-container {
+          margin-bottom: 20px;
         }
+      }
+      @media (max-width: 768px) {
+        #accordion-open {
+          width: 90%; /* Adjust width for smaller screens */
+          padding: 10px;
+        }
+      }
 
-        @media (max-width: 768px) {
-            .arabic-verse {
-                font-size: 1.2rem; 
-                line-height: 1.6; 
-                
-            }
-            .get-random-verse {
-                width: 100%;
-            }
-            .search-verse {
-                margin: 0;
-                width: 100%;
-            }
-            .search-verse-button, .download-verse-button, .play-button{
-                width: 100%;
-            }
-            
-        }
-        @media only screen and (max-width: 600px) {
-            .ayah-container {
-                margin-bottom: 20px;
-            }
+      .search-verse {
+        width: calc(100%);
+        background-color: #4b5563;
+        border: none;
+        box-sizing: border-box;
+        outline: none;
+      }
 
-        }
-        .search-verse{
-            width: calc(100%); 
-            background-color: #4B5563;
-            border: none; 
-            box-sizing: border-box;
-            outline: none;
-        }
+      .search-verse:focus {
+        outline: none;
+      }
+      .accordion-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+      }
 
-        .search-verse:focus {
-            outline: none;
+      .accordion-body.show {
+        max-height: 500px; /* Adjust this value based on the content size */
+      }
+      #accordion-open {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000; /* Ensure it's above other content */
+        width: 80%; /* Adjust the width as needed */
+        max-width: 800px; /* Ensure it doesn't get too wide on large screens */
+        padding: 20px;
+        background-color: #fff; /* Adjust the background color as needed */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for depth */
+      }
+      .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #fff;
+        background-color: #333;
+        border-radius: 20px;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+      #accordion-open {
+        border-radius: 10px;
+        background-color: #1a1a1a; /* Dark background */
+        color: #f5f5f5; /* Light text */
+        font-family: "Arial", sans-serif; /* Example font */
+        /* Other styles as needed */
+        max-height: 90vh; /* Adjust the maximum height to 90% of the viewport height */
+        overflow-y: auto; /* Enable vertical scrolling */
+        scrollbar-width: none;
+      }
+      #accordion-open::-webkit-scrollbar {
+        display: none; /* Hide the scrollbar */
+      }
+      .accordion-title {
+        text-align: center;
+        color: #f5f5f5; /* Light text for the title */
+        margin-bottom: 20px; /* Adjust the margin as needed */
+        color: #fff; /* Adjust the color to match your theme */
+        font-size: 24px; /* Adjust the font size as needed */
+      }
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.7
+        ); /* Darker overlay for elevation effect */
+        width: 100%;
+        height: 100%;
+        z-index: 999; /* Ensure it's below the accordion but above other content */
+      }
+
+      @media (max-width: 768px) {
+        #accordion-open {
+          width: 90%; /* Adjust width for smaller screens */
+          margin: 5% auto; /* Center the accordion and add some margin */
         }
+      }
+      .larger-font {
+        font-size: 1.7em; /* Adjust the size as needed */
+      }
+      .readable-title {
+        font-family: "Arial", sans-serif; /* Arial is widely recognized for readability */
+        font-size: 1.5em; /* Adjust the size as needed */
+        line-height: 1.1; /* Adjust line height for better readability */
+        letter-spacing: 0.01em; /* Adjust letter spacing for better readability */
+      }
     </style>
-</head>
-<body class="text-white font-sans">
+  </head>
+  <body class="text-white font-sans">
+    <div id="overlay" class="hidden"></div>
     <div class="container mx-auto px-4 py-8">
-        <h2 class="text-4xl font-bold mb-8 text-center">Discover a Random Ayah</h2>
-        <div class="flex flex-col md:flex-row justify-center items-center gap-8">
-            <div class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 text-center">
-                <h3 class="text-2xl font-semibold mb-4">Arabic Verse</h3>
-                <p class="arabic-verse accent-gray">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-            </div>
-            <div class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 text-center">
-                <h3 class="text-2xl font-semibold mb-4">English Translation</h3>
-                <p class="english-verse accent-gray">In the name of Allah, the Most Gracious, the Most Merciful.</p>
-            </div>
-            <div class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 ">
-                <h3 class="text-2xl font-semibold mb-4 text-center" >Other Information</h3>
-                <p class="surah-info accent-gray">Surah (1) سُورَةُ اَلْفَاتِحَةُ, Verse: 1</p>
-                <p class="english-name accent-gray">English Name: Al-Faatiha</p>
-                <p class="relevation-type accent-gray">Relevation Type: Meccan</p>
-                <p class="is-sajda accent-gray">Sajda: No</p>
-                <p class="juz-info accent-gray">Juz: 1</p>
-                <p class="manzil-info accent-gray">Manzil: 1</p>
-                <p class="page-info accent-gray">Page: 1</p>
-                <p class="ruku-info accent-gray">Ruku: 1</p>
-                <p class="hizb-info accent-gray">Hizb: 1</p>
-
-                
-            </div>
+      <h2 class="text-4xl font-bold mb-8 text-center">
+        Discover a Random Ayah
+      </h2>
+      <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+        <div
+          class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 text-center"
+        >
+          <h3 class="text-2xl font-semibold mb-4">Arabic Verse</h3>
+          <p class="arabic-verse accent-gray">
+            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+          </p>
         </div>
-        <div class="mt-8 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8">
-            <button class="get-random-verse bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out" aria-label="Get a random verse">Get Random Verse</button>
-            <button class="play-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-100 ease-in-out">Play Audio</button>
-            <button class="download-verse-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration1-00 ease-in-out"> <a class="download-link"  download="1:1.mp3">Download Verse</a></button>
-            <input type="text" class="search-verse bg-gray-800 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" placeholder="Search by Surah and Verse Number (e.g., 2:256)">
-            <button class="search-verse-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out">Search</button>
+        <div
+          class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3 text-center"
+        >
+          <h3 class="text-2xl font-semibold mb-4">English Translation</h3>
+          <p class="english-verse accent-gray">
+            In the name of Allah, the Most Gracious, the Most Merciful.
+          </p>
         </div>
-        <div class="mt-8">
-            <audio class="verse-audio hidden-audio-player" controls autoplay></audio>
+        <div
+          class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3"
+        >
+          <h3 class="text-2xl font-semibold mb-4 text-center">
+            Other Information
+          </h3>
+          <p class="surah-info accent-gray">
+            Surah (1) سُورَةُ اَلْفَاتِحَةُ, Verse: 1
+          </p>
+          <p class="english-name accent-gray">English Name: Al-Faatiha</p>
+          <p class="relevation-type accent-gray">Relevation Type: Meccan</p>
+          <p class="is-sajda accent-gray">Sajda: No</p>
+          <p class="juz-info accent-gray">Juz: 1</p>
+          <p class="manzil-info accent-gray">Manzil: 1</p>
+          <p class="page-info accent-gray">Page: 1</p>
+          <p class="ruku-info accent-gray">Ruku: 1</p>
+          <p class="hizb-info accent-gray">Hizb: 1</p>
         </div>
-        <div class="loading-indicator mt-8 text-lg text-center" style="display: none;">Loading...</div>
-        <a href="https://www.github.com/zuhaz" class="watermark" target="_blank" rel="noopener noreferrer">Created by Zuhaz</a>
-
+      </div>
+      <div
+        class="mt-8 flex flex-col md:flex-row justify-center items-center gap-5 md:gap-8"
+      >
+        <button
+          class="get-random-verse bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out"
+          aria-label="Get a random verse"
+        >
+          Get Random Verse
+        </button>
+        <button
+          class="play-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-100 ease-in-out"
+        >
+          Play Audio
+        </button>
+        <button
+          class="download-verse-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration1-00 ease-in-out"
+        >
+          <a class="download-link" download="1:1.mp3">Download Verse</a>
+        </button>
+        <button
+          class="tafsir-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration1-00 ease-in-out"
+          id="tafsirButton"
+        >
+          Tafsir
+        </button>
+        <input
+          type="text"
+          class="search-verse bg-gray-800 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          placeholder="Search by Surah and Verse Number (e.g., 2:256)"
+        />
+        <button
+          class="search-verse-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out"
+        >
+          Search
+        </button>
+      </div>
+      <div class="mt-8">
+        <audio
+          class="verse-audio hidden-audio-player"
+          controls
+          autoplay
+        ></audio>
+      </div>
+      <div
+        class="loading-indicator mt-8 text-lg text-center"
+        style="display: none"
+      >
+        Loading...
+      </div>
+      <a
+        href="https://www.github.com/zuhaz"
+        class="watermark"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Created by Zuhaz</a
+      >
     </div>
     <script src="script.js"></script>
-</body>
+
+    <div id="accordion-open" data-accordion="open" class="hidden">
+      <button id="closeAccordion" class="close-button">&times;</button>
+      <h2 class="accordion-title">
+        Tafsirs for Surah (1) سُورَةُ اَلْفَاتِحَةُ, Verse: 1
+      </h2>
+
+      <div id="accordion-nested-parent"></div>
+    </div>
+  </body>
 </html>
