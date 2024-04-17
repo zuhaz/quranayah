@@ -123,6 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((data) => {
         audioFileUrl = audioBaseUrl + data.audio_files[0].url;
+        console.log(data.audio_files[0].url)
         verseAudio.src = audioFileUrl;
         verseAudio.play().then(() => {
           playButton.innerHTML = "Pause Audio";
