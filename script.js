@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Common function to fetch verse
   function fetchVerse(verseKey) {
-    const base_url = `https://api.alquran.cloud/v1/ayah/${verseKey}/editions/quran-uthmani,en.pickthall`;
+    const base_url = `https://api.alquran.cloud/v1/ayah/${verseKey}/editions/quran-uthmani,en.sarwar`;
     fetch(base_url)
       .then((response) => {
         if (!response.ok) {
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ".relevation-type"
     ).textContent = `Relevation Type: ${arabicData.surah.revelationType}`;
     document.querySelector(".is-sajda").textContent = `Sajda: ${
-      arabicData.sajda === true ? "Yes" : "No"
+      arabicData.sajda ? "Yes" : "No"
     }`;
     document.querySelector(".juz-info").textContent = `Juz: ${arabicData.juz}`;
     document.querySelector(
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((data) => {
         audioFileUrl = audioBaseUrl + data.audio_files[0].url;
-        console.log(data.audio_files[0].url)
+        console.log(data.audio_files[0].url);
         verseAudio.src = audioFileUrl;
         verseAudio.play().then(() => {
           playButton.innerHTML = "Pause Audio";
