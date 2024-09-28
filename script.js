@@ -536,9 +536,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function copyVerseText() {
     const arabicText = arabicVerse.textContent.trim();
     const englishText = englishVerse.textContent.trim();
-    const surahAyahInfo = surahInfo.textContent.match(
-      /Surah: .+ \((\d+)\), Verse: (\d+)/
-    );
+    const surahAyahInfo = surahInfo.textContent.match(/\((\d+)\):(\d+)/);
     const surahAyah = surahAyahInfo
       ? `(${surahAyahInfo[1]}:${surahAyahInfo[2]})`
       : "";
