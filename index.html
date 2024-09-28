@@ -25,7 +25,7 @@
       }
 
       .accent-red {
-        color: #e50914;
+        color: #4a90e2;
       }
 
       .accent-gray {
@@ -45,13 +45,14 @@
 
       .arabic-verse {
         font-family: "Droid Arabic Naskh", serif;
-        font-size: 2.2rem;
-        line-height: 1.8;
+        font-size: 2.5rem;
+        line-height: 2;
         text-align: right;
         direction: rtl;
         margin-bottom: 1.5rem;
         letter-spacing: 0.05em;
         word-spacing: 0.1em;
+        color: #ffffff;
       }
 
       .hidden-audio-player {
@@ -75,7 +76,6 @@
         }
       }
 
-      /* Optimize media queries */
       @media (max-width: 768px) {
         .arabic-verse {
           font-size: 1.2rem;
@@ -142,10 +142,17 @@
         font-size: 24px;
         cursor: pointer;
         color: #fff;
-        background-color: #333;
-        border-radius: 20px;
-        padding: 5px 10px;
-        cursor: pointer;
+        background-color: #4a90e2;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s ease;
+      }
+      .close-button:hover {
+        background-color: #357abd;
       }
       #accordion-open {
         border-radius: 10px;
@@ -191,6 +198,381 @@
         line-height: 1.1;
         letter-spacing: 0.01em;
       }
+
+      @media (max-width: 768px) {
+        .main-container {
+          padding: 0 10px;
+        }
+        .ayah-container {
+          width: 100%;
+          margin-bottom: 20px;
+        }
+        .button-container {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .button-container > * {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+        .arabic-verse {
+          font-size: 2rem;
+        }
+        .english-verse {
+          font-size: 1.1rem;
+        }
+      }
+
+      .english-verse {
+        font-size: 1.25rem;
+        line-height: 1.6;
+        color: #e0e0e0;
+      }
+      .copy-button {
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+
+      .button-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 2rem;
+      }
+
+      .modern-button {
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .modern-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .search-container {
+        display: flex;
+        width: 100%;
+        max-width: 500px;
+        margin: 2rem auto;
+      }
+
+      .search-verse {
+        flex-grow: 1;
+        background-color: #2c2c2c;
+        border-radius: 30px 0 0 30px;
+        padding: 12px 20px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .search-verse:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 0.5px #4a90e2;
+      }
+
+      .search-verse-button {
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 0 30px 30px 0;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+      }
+
+      #translationSelect {
+        background-color: #2c2c2c;
+        color: white;
+        border-radius: 30px;
+        padding: 10px 20px;
+        font-size: 14px;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 30px;
+      }
+
+      @media (max-width: 768px) {
+        .button-container {
+          flex-direction: column;
+        }
+
+        .modern-button,
+        .search-verse-button,
+        #translationSelect {
+          width: 100%;
+        }
+
+        .search-container {
+          flex-direction: column;
+        }
+
+        .search-verse,
+        .search-verse-button {
+          border-radius: 30px;
+          margin-bottom: 10px;
+        }
+      }
+
+      #accordion-open {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        width: 80%;
+        max-width: 800px;
+        padding: 20px;
+        background-color: #1a1a1a;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        color: #f5f5f5;
+        font-family: "Arial", sans-serif;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      #accordion-open::-webkit-scrollbar {
+        display: none;
+      }
+
+      .accordion-title {
+        text-align: center;
+        color: #fff;
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #fff;
+        background-color: #4a90e2;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s ease;
+      }
+
+      .close-button15151 {
+        background-color: #357abd;
+      }
+
+      .accordion-button {
+        background-color: #2c2c2c;
+        color: #fff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        width: 100%;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .accordion-button15151 {
+        background-color: #3c3c3c;
+      }
+
+      .accordion-content {
+        background-color: #2c2c2c;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .accordion-icon {
+        transition: transform 0.3s ease;
+      }
+
+      .accordion-button[aria-expanded="true"] .accordion-icon {
+        transform: rotate(180deg);
+      }
+
+      @media (max-width: 768px) {
+        #accordion-open {
+          width: 90%;
+          padding: 15px;
+        }
+
+        .accordion-button {
+          font-size: 12px;
+          padding: 10px 15px;
+        }
+
+        .accordion-content {
+          font-size: 12px;
+        }
+      }
+
+      .sub-book-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sub-book-button {
+        background-color: #3c3c3c;
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 14px;
+        text-align: left;
+        width: calc(100% - 40px);
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .sub-book-button15151 {
+        background-color: #4c4c4c;
+      }
+
+      .sub-book-button.active {
+        background-color: #4a90e2;
+      }
+
+      .tafsir-content {
+        background-color: #2c2c2c;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        font-size: 18px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: "Arial", sans-serif;
+        max-height: 300px;
+        overflow-y: auto;
+        position: relative;
+      }
+      @media (max-width: 768px) {
+        .tafsir-content {
+          font-size: 16px;
+          padding: 15px;
+        }
+      }
+
+      .tafsir-content {
+        background-color: #2c2c2c;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        font-size: 16px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: "Arial", sans-serif;
+        max-height: 300px;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .tafsir-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .tafsir-icon {
+        width: 24px;
+        height: 24px;
+        fill: #4a90e2;
+      }
+
+      .modern-button {
+        background-color: #4a90e2;
+      }
+
+      .modern-button:hover {
+        background-color: #357abd;
+      }
+
+      .search-verse-button {
+        background-color: #4a90e2;
+      }
+
+      .search-verse-button:hover {
+        background-color: #357abd;
+      }
+
+      .info-item {
+        background-color: rgba(74, 144, 226, 0.1);
+        border-radius: 12px;
+        padding: 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .info-item:hover {
+        background-color: rgba(74, 144, 226, 0.2);
+        transform: translateY(-1.5px);
+        cursor: pointer;
+      }
+
+      .info-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #4a90e2;
+        margin-bottom: 4px;
+      }
+
+      .info-value {
+        font-size: 1rem;
+        color: #e0e0e0;
+        font-style: bold;
+      }
+
+      @media (max-width: 768px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body class="text-white font-sans">
@@ -217,59 +599,79 @@
           </p>
         </div>
         <div
-          class="ayah-container bg-netflix p-6 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3"
+          class="ayah-container bg-netflix p-8 rounded-lg shadow-lg w-full md:w-1/2 lg:w-1/3"
         >
-          <h3 class="text-2xl font-semibold mb-4 text-center">
+          <h3 class="text-2xl font-semibold mb-6 text-center">
             Other Information
           </h3>
-          <p class="surah-info accent-gray">
-            Surah (1) سُورَةُ اَلْفَاتِحَةُ, Verse: 1
-          </p>
-          <p class="english-name accent-gray">English Name: Al-Faatiha</p>
-          <p class="relevation-type accent-gray">Relevation Type: Meccan</p>
-          <p class="is-sajda accent-gray">Sajda: No</p>
-          <p class="juz-info accent-gray">Juz: 1</p>
-          <p class="manzil-info accent-gray">Manzil: 1</p>
-          <p class="page-info accent-gray">Page: 1</p>
-          <p class="ruku-info accent-gray">Ruku: 1</p>
-          <p class="hizb-info accent-gray">Hizb: 1</p>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="info-item">
+              <span class="info-label">Surah</span>
+              <span class="info-value surah-info"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">English Name</span>
+              <span class="info-value english-name"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Revelation Type</span>
+              <span class="info-value relevation-type"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Sajda</span>
+              <span class="info-value is-sajda"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Juz</span>
+              <span class="info-value juz-info"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Manzil</span>
+              <span class="info-value manzil-info"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Page</span>
+              <span class="info-value page-info"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Ruku</span>
+              <span class="info-value ruku-info"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Hizb Quarter</span>
+              <span class="info-value hizb-info"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Ayah Number</span>
+              <span class="info-value ayah-number"></span>
+            </div>
+          </div>
         </div>
       </div>
-      <div
-        class="mt-8 flex flex-col md:flex-row justify-center items-center gap-5 md:gap-8"
-      >
+      <div class="search-container">
+        <input
+          type="text"
+          class="search-verse"
+          placeholder="Search by Surah and Verse Number (e.g., 2:256)"
+        />
+        <button class="search-verse-button">Search</button>
+      </div>
+      <div class="button-container">
         <button
-          class="get-random-verse bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out"
+          class="modern-button get-random-verse"
           aria-label="Get a random verse"
         >
           Get Random Verse
         </button>
-        <button
-          class="play-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-100 ease-in-out"
-        >
-          Play Audio
-        </button>
-        <button
-          class="download-verse-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration1-00 ease-in-out"
-        >
+        <button class="modern-button play-button">Play Audio</button>
+        <button class="modern-button download-verse-button">
           <a class="download-link" download="1:1.mp3">Download Verse</a>
         </button>
-        <button
-          class="tafsir-button bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration1-00 ease-in-out"
-          id="tafsirButton"
-        >
+        <button class="modern-button tafsir-button" id="tafsirButton">
           Tafsir
         </button>
-        <input
-          type="text"
-          class="search-verse bg-gray-800 text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-          placeholder="Search by Surah and Verse Number (e.g., 2:256)"
-        />
-        <button
-          class="search-verse-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out"
-        >
-          Search
-        </button>
+        <button class="modern-button copy-verse-button">Copy Verse</button>
+        <select id="translationSelect"></select>
       </div>
       <div class="mt-8">
         <audio
@@ -291,25 +693,16 @@
         rel="noopener noreferrer"
         >Created by Zuhaz</a
       >
-      <a
-        class="coffee"
-        href="https://www.buymeacoffee.com/zuhaz"
-        target="_blank"
-        ><img
-          src="https://img.buymeacoffee.com/button-api/?text=Buy me a Coffee&amp;emoji=☕&amp;slug=zuhaz&amp;button_colour=40DCA5&amp;font_colour=ffffff&amp;font_family=Cookie&amp;outline_colour=000000&amp;coffee_colour=FFDD00"
-          loading="lazy"
-          alt="Buy me a Coffee"
-      /></a>
     </div>
     <script src="script.js"></script>
 
-    <div id="accordion-open" data-accordion="open" class="hidden">
+    <div id="accordion-open" data-accordion="open" class="hidden disabled">
       <button id="closeAccordion" class="close-button">&times;</button>
       <h2 class="accordion-title">
         Tafsirs for Surah (1) سُورَةُ اَلْفَاتِحَةُ, Verse: 1
       </h2>
 
-      <div id="accordion-nested-parent"></div>
+      <div id="accordion-nested-parent" class="space-y-4"></div>
     </div>
   </body>
 </html>

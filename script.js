@@ -10,6 +10,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const loadingIndicator = document.querySelector(".loading-indicator");
   const downloadButton = document.querySelector(".download-verse-button");
   const playButton = document.querySelector(".play-button");
+  const translationSelect = document.getElementById("translationSelect");
+  const translationTitle = document.querySelector(
+    ".ayah-container:nth-child(2) h3"
+  );
+  const copyVerseButton = document.querySelector(".copy-verse-button");
 
   // Audio variables
   let audioFileUrl;
@@ -20,9 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
   searchVerseButton.addEventListener("click", searchVerse);
   downloadButton.addEventListener("click", downloadAudio);
   playButton.addEventListener("click", togglePlay);
+  translationSelect.addEventListener("change", updateTranslation);
+  copyVerseButton.addEventListener("click", copyVerseText);
 
   // Initial function calls
-  getRandVerse();
+  populateTranslationSelect().then(() => {
+    getRandVerse();
+  });
 
   // Fetch random verse
   function getRandVerse() {
@@ -39,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const verse = searchQuery[1];
       loadingIndicator.style.display = "block";
       fetchVerse(`${surah}:${verse}`);
+      fetchTranslation(`${surah}:${verse}`, translationSelect.value);
       newSections = [];
       getTafsirs(`${surah}:${verse}`);
       tafsirButton.disabled = false;
@@ -49,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Common function to fetch verse
   function fetchVerse(verseKey) {
-    const base_url = `https://api.alquran.cloud/v1/ayah/${verseKey}/editions/quran-uthmani,en.sarwar`;
+    const base_url = `https://api.alquran.cloud/v1/ayah/${verseKey}/editions/quran-uthmani`;
     fetch(base_url)
       .then((response) => {
         if (!response.ok) {
@@ -58,13 +68,21 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.json();
       })
       .then((data) => {
-        displayVerse(data.data[0], data.data[1]);
-
+        displayVerse(data.data[0]);
+        fetchTranslation(
+          data.data[0].surah.number + ":" + data.data[0].numberInSurah,
+          translationSelect.value
+        );
         fetchVerseAudio(
           data.data[0].surah.number,
           data.data[0].numberInSurah,
           7
         );
+        newSections = [];
+        getTafsirs(
+          `${data.data[0].surah.number}:${data.data[0].numberInSurah}`
+        );
+        tafsirButton.disabled = false;
         loadingIndicator.style.display = "none";
       })
       .catch((error) => {
@@ -75,38 +93,27 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Display verse
-  async function displayVerse(arabicData, englishData) {
+  async function displayVerse(arabicData) {
     arabicVerse.textContent = arabicData.text;
-    englishVerse.textContent = englishData.text;
-    surahInfo.textContent = `Surah: ${arabicData.surah.name} (${arabicData.surah.number}), Verse: ${arabicData.numberInSurah}`;
     document.querySelector(
-      ".english-name"
-    ).textContent = `English Name: ${arabicData.surah.englishName}`;
-    document.querySelector(
-      ".relevation-type"
-    ).textContent = `Relevation Type: ${arabicData.surah.revelationType}`;
-    document.querySelector(".is-sajda").textContent = `Sajda: ${
-      arabicData.sajda ? "Yes" : "No"
-    }`;
-    document.querySelector(".juz-info").textContent = `Juz: ${arabicData.juz}`;
-    document.querySelector(
-      ".manzil-info"
-    ).textContent = `Manzil: ${arabicData.manzil}`;
-    document.querySelector(
-      ".page-info"
-    ).textContent = `Page: ${arabicData.page}`;
-    document.querySelector(
-      ".ruku-info"
-    ).textContent = `Ruku: ${arabicData.ruku}`;
-    document.querySelector(
-      ".hizb-info"
-    ).textContent = `Hizb Quarter: ${arabicData.hizbQuarter}`;
+      ".surah-info"
+    ).textContent = `${arabicData.surah.name} (${arabicData.surah.number}):${arabicData.numberInSurah}`;
+    document.querySelector(".english-name").textContent =
+      arabicData.surah.englishName;
+    document.querySelector(".relevation-type").textContent =
+      arabicData.surah.revelationType;
+    document.querySelector(".is-sajda").textContent = arabicData.sajda
+      ? "Yes"
+      : "No";
+    document.querySelector(".juz-info").textContent = arabicData.juz;
+    document.querySelector(".manzil-info").textContent = arabicData.manzil;
+    document.querySelector(".page-info").textContent = arabicData.page;
+    document.querySelector(".ruku-info").textContent = arabicData.ruku;
+    document.querySelector(".hizb-info").textContent = arabicData.hizbQuarter;
     document.querySelector(
       ".accordion-title"
     ).textContent = `Tafsir for ${arabicData.surah.name}, Verse: ${arabicData.numberInSurah}`;
-    newSections = [];
-    getTafsirs(`${arabicData.surah.number}:${arabicData.numberInSurah}`);
-    tafsirButton.disabled = false;
+    document.querySelector(".ayah-number").textContent = arabicData.number;
   }
 
   // Fetch audio for verse
@@ -161,22 +168,40 @@ document.addEventListener("DOMContentLoaded", function () {
       playButton.innerHTML = "Play Audio";
     }
   }
+
   const tafsirButton = document.getElementById("tafsirButton");
   const accordion = document.getElementById("accordion-open");
   const overlay = document.getElementById("overlay");
+  const closeAccordionButton = document.getElementById("closeAccordion");
+
+  // Ensure accordion is hidden on page load
+  accordion.classList.add("hidden");
+  overlay.classList.add("hidden");
 
   tafsirButton.addEventListener("click", function () {
-    accordion.classList.toggle("show");
-    overlay.classList.toggle("show");
-    document.getElementById("accordion-open").classList.toggle("show");
-    // Toggle the 'show' class for the accordion body
-    const accordionBodies = document.querySelectorAll(".accordion-body");
-    accordionBodies.forEach((body) => {
-      body.classList.toggle("show");
-    });
+    accordion.classList.remove("hidden");
+    overlay.classList.remove("hidden");
+    const currentVerseKey = surahInfo.textContent.match(
+      /Surah: .+ \((\d+)\), Verse: (\d+)/
+    );
+    if (currentVerseKey) {
+      const verseKey = `${currentVerseKey[1]}:${currentVerseKey[2]}`;
+      getTafsirs(verseKey);
+    }
   });
 
-  async function getTafsirs(ayahKey) {
+  closeAccordionButton.addEventListener("click", function () {
+    accordion.classList.add("hidden");
+    overlay.classList.add("hidden");
+  });
+
+  overlay.addEventListener("click", function () {
+    accordion.classList.add("hidden");
+    overlay.classList.add("hidden");
+  });
+
+  // Modify the getTafsirs function
+  function getTafsirs(ayahKey) {
     const languages = [
       { code: "en", name: "English", url: "en-tafisr-ibn-kathir" },
       { code: "en", name: "English", url: "en-tafsir-maarif-ul-quran" },
@@ -263,146 +288,271 @@ document.addEventListener("DOMContentLoaded", function () {
     // Store languages and their tafsirs
     const languageMap = {};
 
-    tafsirs.forEach((tafsir, index) => {
-      // Check if the language already exists in the map
+    tafsirs.forEach((tafsir) => {
       if (!languageMap.hasOwnProperty(tafsir.language)) {
-        // If not, create a new entry for the language
         languageMap[tafsir.language] = {
           title: tafsir.language,
           tafsirs: [],
         };
       }
-
-      // Append tafsir to existing language entry
       languageMap[tafsir.language].tafsirs.push({
         title: tafsir.title,
         content: tafsir.content,
       });
     });
 
+    // Function to parse HTML content
+    function parseHTML(html) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+      return doc.body.textContent || "";
+    }
+
     // Iterate over languages and append them to the accordion container
     Object.keys(languageMap).forEach((language, index) => {
-      // Inside the displayTafsirs function, where languageHeading is created
-      const languageHeading = document.createElement("h2");
-      languageHeading.id = `accordion-collapse-heading-${index + 1}`;
-      languageHeading.classList.add("readable-title"); // Add the 'readable-title' class here
-      languageHeading.innerHTML = `
-          <button type="button" class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3" data-accordion-target="#accordion-collapse-body-${
-            index + 1
-          }" aria-expanded="false" aria-controls="accordion-collapse-body-${
-        index + 1
-      }">
-              <span>${language}</span>
-              <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
-              </svg>
-          </button>
+      const languageSection = document.createElement("div");
+      languageSection.classList.add("mb-4");
+
+      const languageButton = document.createElement("button");
+      languageButton.classList.add("accordion-button");
+      languageButton.innerHTML = `
+        <span>${language}</span>
+        <svg class="accordion-icon w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
       `;
+      languageButton.setAttribute("aria-expanded", "false");
 
-      const content = document.createElement("div");
-      content.id = `accordion-collapse-body-${index + 1}`;
-      content.classList.add("hidden");
-      content.setAttribute(
-        "aria-labelledby",
-        `accordion-collapse-heading-${index + 1}`
-      );
+      const languageContent = document.createElement("div");
+      languageContent.classList.add("accordion-content", "hidden");
 
-      // Create nested accordion for tafsirs
-      const nestedAccordion = document.createElement("div");
-      nestedAccordion.id = `accordion-nested-collapse-${index + 1}`;
-      nestedAccordion.setAttribute("data-accordion", "collapse");
+      // Create a list for sub-books
+      const subBookList = document.createElement("ul");
+      subBookList.classList.add("sub-book-list");
 
-      // Append tafsir headings to nested accordion
-      languageMap[language].tafsirs.forEach((tafsir, tafsirIndex) => {
-        // Inside the displayTafsirs function, where tafsirHeading is created
-        const tafsirHeading = document.createElement("h3");
-        tafsirHeading.id = `tafsir-heading-${index + 1}-${tafsirIndex + 1}`;
-        tafsirHeading.classList.add("readable-title"); // Add the 'readable-title' class here
-        tafsirHeading.innerHTML = `
-              <button type="button" class="flex items-center justify-between w-full p-3 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3" data-accordion-target="#tafsir-body-${
-                index + 1
-              }-${
-          tafsirIndex + 1
-        }" aria-expanded="false" aria-controls="tafsir-body-${index + 1}-${
-          tafsirIndex + 1
-        }">
-                  <span>${tafsir.title}</span>
-                  <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
-                  </svg>
-              </button>
-          `;
+      languageMap[language].tafsirs.forEach((tafsir, subIndex) => {
+        const listItem = document.createElement("li");
+        const subBookButton = document.createElement("button");
+        subBookButton.classList.add("sub-book-button");
+        subBookButton.textContent = tafsir.title;
 
-        // Inside the displayTafsirs function, where tafsirContent is created
-        const tafsirContent = document.createElement("div");
-        tafsirContent.id = `tafsir-body-${index + 1}-${tafsirIndex + 1}`;
-        tafsirContent.classList.add("hidden", "larger-font"); // Add the 'larger-font' class here
-        tafsirContent.innerHTML = `
-              <div class="p-3 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
-                  <p class="mb-2 text-white-700 dark:text-white-700">${
-                    tafsir.content !== ""
-                      ? tafsir.content
-                      : `${tafsir.title} is not available for the current verse.`
-                  }</p>
-              </div>
-          `;
+        const tafsirContent = document.createElement("pre");
+        tafsirContent.classList.add("tafsir-content", "hidden");
 
-        nestedAccordion.appendChild(tafsirHeading);
-        nestedAccordion.appendChild(tafsirContent);
+        const parsedContent = parseHTML(tafsir.content);
+        tafsirContent.textContent =
+          parsedContent !== ""
+            ? parsedContent
+            : `${tafsir.title} is not available for the current verse.`;
+
+        subBookButton.addEventListener("click", function () {
+          // Toggle visibility of tafsir content
+          tafsirContent.classList.toggle("hidden");
+          // Toggle active state of button
+          this.classList.toggle("active");
+        });
+
+        listItem.appendChild(subBookButton);
+        listItem.appendChild(tafsirContent);
+        subBookList.appendChild(listItem);
       });
 
-      content.appendChild(nestedAccordion);
+      languageContent.appendChild(subBookList);
+      languageSection.appendChild(languageButton);
+      languageSection.appendChild(languageContent);
+      accordionContainer.appendChild(languageSection);
 
-      accordionContainer.appendChild(languageHeading);
-      accordionContainer.appendChild(content);
-    });
-
-    // Add click event listener to each language button for accordion behavior
-    const accordionButtons = document.querySelectorAll(
-      "[data-accordion-target]"
-    );
-    accordionButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const targetId = this.getAttribute("data-accordion-target");
-        const targetElement = document.querySelector(targetId);
+      // Add click event listener to language button
+      languageButton.addEventListener("click", function () {
         const isExpanded = this.getAttribute("aria-expanded") === "true";
-
-        targetElement.classList.toggle("hidden");
         this.setAttribute("aria-expanded", !isExpanded);
-        this.querySelector("[data-accordion-icon]").classList.toggle(
-          "rotate-180"
-        );
+        languageContent.classList.toggle("hidden");
       });
     });
 
-    // Add click event listener to the tafsir button
-    const tafsirButton = document.getElementById("tafsirButton");
-    tafsirButton.addEventListener("click", function () {
-      accordion.classList.remove("hidden");
-      overlay.classList.remove("hidden");
-      // Toggle the 'show' class for the accordion body
-      const accordionBodies = document.querySelectorAll(".accordion-body");
-      accordionBodies.forEach((body) => {
-        body.classList.remove("hidden");
-      });
-    });
-
-    // const tafsirButton = document.getElementById("tafsirButton");
-    const accordion = document.getElementById("accordion-open");
-
-    const emojiSpans = document.querySelectorAll(".emoji");
-    emojiSpans.forEach((span) => {
-      span.remove();
-    });
+    // Add click event listener to close button
     const closeAccordionButton = document.getElementById("closeAccordion");
-
     closeAccordionButton.addEventListener("click", function () {
       accordion.classList.add("hidden");
       overlay.classList.add("hidden");
     });
+
+    // Add click event listener to overlay
     overlay.addEventListener("click", function () {
       accordion.classList.add("hidden");
       overlay.classList.add("hidden");
     });
   }
+
+  // New function to populate the translation select dropdown
+  function populateTranslationSelect() {
+    return fetch("https://api.quran.com/api/v4/resources/translations")
+      .then((response) => response.json())
+      .then((data) => {
+        data.translations.forEach((translation) => {
+          const option = document.createElement("option");
+          option.value = translation.id;
+          option.textContent =
+            translation.language_name.charAt(0).toUpperCase() +
+            translation.language_name.slice(1) +
+            " (" +
+            translation.name +
+            ")";
+          option.dataset.language = translation.language_name;
+          translationSelect.appendChild(option);
+        });
+
+        const defaultTranslationId = "95";
+
+        if (
+          data.translations.some(
+            (t) => t.id.toString() === defaultTranslationId
+          )
+        ) {
+          translationSelect.value = defaultTranslationId;
+        } else {
+          console.warn(
+            `Default translation ID ${defaultTranslationId} not found. Using first available translation.`
+          );
+          translationSelect.value = data.translations[0].id;
+        }
+
+        updateTranslationTitle();
+      })
+      .catch((error) => console.error("Error fetching translations:", error));
+  }
+
+  function updateTranslationTitle() {
+    const selectedOption =
+      translationSelect.options[translationSelect.selectedIndex];
+    const language = selectedOption.dataset.language;
+    translationTitle.textContent = `${
+      language.charAt(0).toUpperCase() + language.slice(1)
+    } Translation`;
+  }
+
+  // New function to fetch translation
+  function fetchTranslation(verseKey, translationId) {
+    const url = `https://api.quran.com/api/v4/quran/translations/${translationId}?verse_key=${verseKey}`;
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        const translation = data.translations[0];
+        englishVerse.innerHTML = parseTranslationHTML(translation.text);
+      })
+      .catch((error) => {
+        console.error("Error fetching translation:", error);
+      });
+  }
+
+  function parseTranslationHTML(htmlString) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, "text/html");
+
+    // Replace <sup> elements with superscript Unicode characters
+    doc.querySelectorAll("sup").forEach((sup) => {
+      sup.replaceWith(toSuperscript(sup.textContent));
+    });
+
+    // Replace <sub> elements with subscript Unicode characters
+    doc.querySelectorAll("sub").forEach((sub) => {
+      sub.replaceWith(toSubscript(sub.textContent));
+    });
+
+    return doc.body.innerHTML;
+  }
+
+  function toSuperscript(str) {
+    const superscriptMap = {
+      0: "⁰",
+      1: "¹",
+      2: "²",
+      3: "³",
+      4: "⁴",
+      5: "⁵",
+      6: "⁶",
+      7: "⁷",
+      8: "⁸",
+      9: "⁹",
+      "+": "⁺",
+      "-": "⁻",
+      "=": "⁼",
+      "(": "⁽",
+      ")": "⁾",
+      n: "ⁿ",
+      i: "ⁱ",
+    };
+    return str
+      .split("")
+      .map((char) => superscriptMap[char] || char)
+      .join("");
+  }
+
+  function toSubscript(str) {
+    const subscriptMap = {
+      0: "₀",
+      1: "₁",
+      2: "₂",
+      3: "₃",
+      4: "₄",
+      5: "₅",
+      6: "₆",
+      7: "₇",
+      8: "₈",
+      9: "₉",
+      "+": "₊",
+      "-": "₋",
+      "=": "₌",
+      "(": "₍",
+      ")": "₎",
+      a: "ₐ",
+      e: "ₑ",
+      o: "ₒ",
+      x: "ₓ",
+      h: "ₕ",
+      k: "ₖ",
+      l: "ₗ",
+      m: "ₘ",
+      n: "ₙ",
+      p: "ₚ",
+      s: "ₛ",
+      t: "ₜ",
+    };
+    return str
+      .split("")
+      .map((char) => subscriptMap[char] || char)
+      .join("");
+  }
+
+  function updateTranslation() {
+    updateTranslationTitle();
+    const currentVerseKey = surahInfo.textContent.match(/\((\d+)\):(\d+)/);
+    if (currentVerseKey) {
+      const verseKey = `${currentVerseKey[1]}:${currentVerseKey[2]}`;
+      fetchTranslation(verseKey, translationSelect.value);
+    }
+  }
+
+  function copyVerseText() {
+    const arabicText = arabicVerse.textContent.trim();
+    const englishText = englishVerse.textContent.trim();
+    const surahAyahInfo = surahInfo.textContent.match(
+      /Surah: .+ \((\d+)\), Verse: (\d+)/
+    );
+    const surahAyah = surahAyahInfo
+      ? `(${surahAyahInfo[1]}:${surahAyahInfo[2]})`
+      : "";
+
+    const textToCopy = `    ${arabicText}\n\n${englishText} ${surahAyah}`;
+
+    navigator.clipboard.writeText(textToCopy).then(
+      function () {
+        alert("Verse copied to clipboard!");
+      },
+      function (err) {
+        console.error("Could not copy text: ", err);
+      }
+    );
+  }
+  copyVerseButton.addEventListener("click", copyVerseText);
 });
